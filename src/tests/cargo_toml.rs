@@ -7,7 +7,7 @@ use crate::cargo_toml::{self, CargoToml};
 use crate::config::Config;
 #[test]
 fn hydrate_cargo_toml_from_config() {
-    let name = "xckd-386".to_string();
+    let name = "useless_crate".to_string();
     let author = "Jane Doe".to_string();
     let version = "1.3.1-2".to_string();
     let license = "GPLv3".to_string();
@@ -27,7 +27,7 @@ fn hydrate_cargo_toml_from_config() {
         repository: Some(repository.clone()),
         readme: Some(readme.clone()),
     };
-    let cargo_toml: CargoToml = config.into();
+    let cargo_toml = CargoToml::from_config(name.clone(), config);
     assert_eq!(cargo_toml.project.name, name);
     assert_eq!(cargo_toml.project.authors, vec![author]);
     assert_eq!(cargo_toml.project.version, version);
@@ -41,7 +41,7 @@ fn hydrate_cargo_toml_from_config() {
 
 #[test]
 fn hydrate_cargo_toml_from_config_with_defaults() {
-    let name = "xckd-386".to_string();
+    let name = "useless_crate".to_string();
     let author = "Jane Doe".to_string();
     let config = Config {
         name: name.clone(),
@@ -54,8 +54,8 @@ fn hydrate_cargo_toml_from_config_with_defaults() {
         repository: None,
         readme: None,
     };
-    let cargo_toml: CargoToml = config.into();
-    assert_eq!(cargo_toml.project.name, name);
+    let cargo_toml = CargoToml::from_config(name.clone(), config);
+    assert_eq!(cargo_toml.project.name, name.clone());
     assert_eq!(cargo_toml.project.authors, vec![author]);
     assert_eq!(cargo_toml.project.version, cargo_toml::VERSION.to_string());
     assert_eq!(cargo_toml.project.license, cargo_toml::LICENSE.to_string());
@@ -81,7 +81,7 @@ fn hydrate_cargo_toml_from_config_with_defaults() {
 #[test]
 fn serialize_to_file() {
     let expected = r#"[project]
-name = "xkcd-386"
+name = "useless_crate"
 authors = ["Jane Doe"]
 version = "0.1.0"
 license = "WTFPL"
@@ -91,18 +91,20 @@ documentation = "https://crates.io/policies"
 repository = "https://github.com/blallo/xkcd-386"
 readme = "README.md"
 "#;
-    let cargo_toml: CargoToml = Config {
-        name: "xkcd-386".to_owned(),
-        author: "Jane Doe".to_owned(),
-        version: None,
-        license: None,
-        description: None,
-        homepage: None,
-        documentation: None,
-        repository: None,
-        readme: None,
-    }
-    .into();
+    let cargo_toml = CargoToml::from_config(
+        "useless_crate".to_string(),
+        Config {
+            name: "xkcd-386".to_owned(),
+            author: "Jane Doe".to_owned(),
+            version: None,
+            license: None,
+            description: None,
+            homepage: None,
+            documentation: None,
+            repository: None,
+            readme: None,
+        },
+    );
     let dir = tempdir().unwrap();
     let filepath = dir.path().join("Cargo.toml");
     let mut file = File::create(filepath.clone()).unwrap();

@@ -46,13 +46,11 @@ impl CargoToml {
     pub fn to_string(&self) -> InternalResult<String> {
         toml::ser::to_string(&self).map_err(|e| e.into())
     }
-}
 
-impl From<Config> for CargoToml {
-    fn from(config: Config) -> Self {
+    pub fn from_config(name: String, config: Config) -> Self {
         Self {
             project: Project {
-                name: config.name,
+                name,
                 authors: vec![config.author],
                 version: config.version.unwrap_or(VERSION.into()),
                 license: config.license.unwrap_or(LICENSE.into()),
