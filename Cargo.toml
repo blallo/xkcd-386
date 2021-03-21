@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 serde = { version = "1.0.82", features = ["derive"]  }
 toml = { version = "0.5.8" }
+cargo = { path = "./cargo" }
 
 [dev-dependencies]
 tempfile = { version = "3.2.0" }
