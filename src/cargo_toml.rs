@@ -15,6 +15,11 @@ pub const README: &str = "README.md";
 
 #[derive(Serialize, Debug)]
 pub struct CargoToml {
+    pub project: Project,
+}
+
+#[derive(Serialize, Debug)]
+pub struct Project {
     pub name: String,
     pub authors: Vec<String>,
     pub version: String,
@@ -46,15 +51,17 @@ impl CargoToml {
 impl From<Config> for CargoToml {
     fn from(config: Config) -> Self {
         Self {
-            name: config.name,
-            authors: vec![config.author],
-            version: config.version.unwrap_or(VERSION.into()),
-            license: config.license.unwrap_or(LICENSE.into()),
-            description: config.description.unwrap_or(DESCRIPTION.into()),
-            homepage: config.homepage.unwrap_or(HOMEPAGE.into()),
-            documentation: config.documentation.unwrap_or(DOCUMENTATION.into()),
-            repository: config.repository.unwrap_or(REPOSITORY.into()),
-            readme: config.readme.unwrap_or(README.into()),
+            project: Project {
+                name: config.name,
+                authors: vec![config.author],
+                version: config.version.unwrap_or(VERSION.into()),
+                license: config.license.unwrap_or(LICENSE.into()),
+                description: config.description.unwrap_or(DESCRIPTION.into()),
+                homepage: config.homepage.unwrap_or(HOMEPAGE.into()),
+                documentation: config.documentation.unwrap_or(DOCUMENTATION.into()),
+                repository: config.repository.unwrap_or(REPOSITORY.into()),
+                readme: config.readme.unwrap_or(README.into()),
+            },
         }
     }
 }

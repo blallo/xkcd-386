@@ -28,15 +28,15 @@ fn hydrate_cargo_toml_from_config() {
         readme: Some(readme.clone()),
     };
     let cargo_toml: CargoToml = config.into();
-    assert_eq!(cargo_toml.name, name);
-    assert_eq!(cargo_toml.authors, vec![author]);
-    assert_eq!(cargo_toml.version, version);
-    assert_eq!(cargo_toml.license, license);
-    assert_eq!(cargo_toml.description, description);
-    assert_eq!(cargo_toml.homepage, homepage);
-    assert_eq!(cargo_toml.documentation, documentation);
-    assert_eq!(cargo_toml.repository, repository);
-    assert_eq!(cargo_toml.readme, readme);
+    assert_eq!(cargo_toml.project.name, name);
+    assert_eq!(cargo_toml.project.authors, vec![author]);
+    assert_eq!(cargo_toml.project.version, version);
+    assert_eq!(cargo_toml.project.license, license);
+    assert_eq!(cargo_toml.project.description, description);
+    assert_eq!(cargo_toml.project.homepage, homepage);
+    assert_eq!(cargo_toml.project.documentation, documentation);
+    assert_eq!(cargo_toml.project.repository, repository);
+    assert_eq!(cargo_toml.project.readme, readme);
 }
 
 #[test]
@@ -55,23 +55,33 @@ fn hydrate_cargo_toml_from_config_with_defaults() {
         readme: None,
     };
     let cargo_toml: CargoToml = config.into();
-    assert_eq!(cargo_toml.name, name);
-    assert_eq!(cargo_toml.authors, vec![author]);
-    assert_eq!(cargo_toml.version, cargo_toml::VERSION.to_string());
-    assert_eq!(cargo_toml.license, cargo_toml::LICENSE.to_string());
-    assert_eq!(cargo_toml.description, cargo_toml::DESCRIPTION.to_string());
-    assert_eq!(cargo_toml.homepage, cargo_toml::HOMEPAGE.to_string());
+    assert_eq!(cargo_toml.project.name, name);
+    assert_eq!(cargo_toml.project.authors, vec![author]);
+    assert_eq!(cargo_toml.project.version, cargo_toml::VERSION.to_string());
+    assert_eq!(cargo_toml.project.license, cargo_toml::LICENSE.to_string());
     assert_eq!(
-        cargo_toml.documentation,
+        cargo_toml.project.description,
+        cargo_toml::DESCRIPTION.to_string()
+    );
+    assert_eq!(
+        cargo_toml.project.homepage,
+        cargo_toml::HOMEPAGE.to_string()
+    );
+    assert_eq!(
+        cargo_toml.project.documentation,
         cargo_toml::DOCUMENTATION.to_string()
     );
-    assert_eq!(cargo_toml.repository, cargo_toml::REPOSITORY.to_string());
-    assert_eq!(cargo_toml.readme, cargo_toml::README.to_string());
+    assert_eq!(
+        cargo_toml.project.repository,
+        cargo_toml::REPOSITORY.to_string()
+    );
+    assert_eq!(cargo_toml.project.readme, cargo_toml::README.to_string());
 }
 
 #[test]
 fn serialize_to_file() {
-    let expected = r#"name = "xkcd-386"
+    let expected = r#"[project]
+name = "xkcd-386"
 authors = ["Jane Doe"]
 version = "0.1.0"
 license = "WTFPL"
