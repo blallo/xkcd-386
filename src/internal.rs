@@ -1,7 +1,6 @@
 use std::error;
 use std::fmt;
 use std::io;
-use toml;
 
 pub type InternalResult<T> = Result<T, InternalError>;
 

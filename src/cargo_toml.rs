@@ -52,13 +52,13 @@ impl CargoToml {
             project: Project {
                 name,
                 authors: vec![config.author],
-                version: config.version.unwrap_or(VERSION.into()),
-                license: config.license.unwrap_or(LICENSE.into()),
-                description: config.description.unwrap_or(DESCRIPTION.into()),
-                homepage: config.homepage.unwrap_or(HOMEPAGE.into()),
-                documentation: config.documentation.unwrap_or(DOCUMENTATION.into()),
-                repository: config.repository.unwrap_or(REPOSITORY.into()),
-                readme: config.readme.unwrap_or(README.into()),
+                version: config.version.unwrap_or_else(|| VERSION.into()),
+                license: config.license.unwrap_or_else(|| LICENSE.into()),
+                description: config.description.unwrap_or_else(|| DESCRIPTION.into()),
+                homepage: config.homepage.unwrap_or_else(|| HOMEPAGE.into()),
+                documentation: config.documentation.unwrap_or_else(|| DOCUMENTATION.into()),
+                repository: config.repository.unwrap_or_else(|| REPOSITORY.into()),
+                readme: config.readme.unwrap_or_else(|| README.into()),
             },
         }
     }

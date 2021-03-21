@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::config::Config;
 use crate::internal::{InternalError, InternalResult};
 

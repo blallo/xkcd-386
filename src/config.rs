@@ -1,8 +1,9 @@
 use std::fs;
+use std::str::FromStr;
 
 use serde::Deserialize;
 
-use crate::internal::InternalResult;
+use crate::internal::{InternalError, InternalResult};
 
 #[derive(Deserialize, Debug)]
 pub struct Config {
@@ -22,8 +23,12 @@ impl Config {
         let content = fs::read_to_string(path)?;
         Self::from_str(content.as_ref())
     }
+}
 
-    pub fn from_str(data: &str) -> InternalResult<Self> {
+impl FromStr for Config {
+    type Err = InternalError;
+
+    fn from_str(data: &str) -> InternalResult<Self> {
         toml::from_str(data).map_err(|e| e.into())
     }
 }
