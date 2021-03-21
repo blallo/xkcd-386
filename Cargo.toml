@@ -1,0 +1,15 @@
+[package]
+name = "xkcd-386"
+version = "0.1.0"
+authors = ["blallo"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0.82", features = ["derive"]  }
+toml = { version = "0.5.8" }
+
+[dev-dependencies]
+tempfile = { version = "3.2.0" }
+pretty_assertions = { version = "0.7.1" }
