@@ -1212,8 +1212,16 @@ name = "xkcd-386"
 version = "0.1.0"
 dependencies = [
  "cargo",
+ "clap",
+ "crates-io",
+ "curl",
+ "env_logger",
+ "flate2",
+ "log",
  "pretty_assertions",
+ "rand",
  "serde",
+ "tar",
  "tempfile",
  "toml",
 ]

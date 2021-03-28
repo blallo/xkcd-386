@@ -46,13 +46,7 @@ fn hydrate_cargo_toml_from_config_with_defaults() {
     let config = Config {
         name: name.clone(),
         author: author.clone(),
-        version: None,
-        license: None,
-        description: None,
-        homepage: None,
-        documentation: None,
-        repository: None,
-        readme: None,
+        ..Default::default()
     };
     let cargo_toml = CargoToml::from_config(name.clone(), config);
     assert_eq!(cargo_toml.project.name, name.clone());
@@ -96,13 +90,7 @@ readme = "README.md"
         Config {
             name: "xkcd-386".to_owned(),
             author: "Jane Doe".to_owned(),
-            version: None,
-            license: None,
-            description: None,
-            homepage: None,
-            documentation: None,
-            repository: None,
-            readme: None,
+            ..Default::default()
         },
     );
     let dir = tempdir().unwrap();

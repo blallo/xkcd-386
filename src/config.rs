@@ -5,7 +5,7 @@ use serde::Deserialize;
 
 use crate::internal::{InternalError, InternalResult};
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone, Default)]
 pub struct Config {
     pub name: String,
     pub author: String,

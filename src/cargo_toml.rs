@@ -13,12 +13,12 @@ pub const DOCUMENTATION: &str = "https://crates.io/policies";
 pub const REPOSITORY: &str = "https://github.com/blallo/xkcd-386";
 pub const README: &str = "README.md";
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone, PartialEq)]
 pub struct CargoToml {
     pub project: Project,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone, PartialEq)]
 pub struct Project {
     pub name: String,
     pub authors: Vec<String>,
@@ -33,7 +33,7 @@ pub struct Project {
 
 impl CargoToml {
     pub fn to_file(&self, path: &str) -> InternalResult<()> {
-        let mut file = File::open(path)?;
+        let mut file = File::create(path)?;
         self.to_open_file(&mut file)
     }
 
