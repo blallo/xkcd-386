@@ -152,7 +152,7 @@ fn main() {
             Project::new(r.clone(), config.clone(), token.clone(), workdir.clone())
                 .with_outdir(outdir.clone())
                 .with_readme(readme.clone())
-                .publish(!dry_run)
+                .publish(dry_run)
                 .unwrap_or_else(|e| log::error!("For {}: {:?}", r, e))
         })
         .collect::<()>();
