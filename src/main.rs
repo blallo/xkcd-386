@@ -138,13 +138,40 @@ fn main() {
     let limit: Option<u32> = cli
         .value_of("limit")
         .map(|l| l.parse::<u32>().expect("Unexpected value for limit"));
-    let source = Source::try_from(cli.value_of("source").unwrap_or("random"))
-        .unwrap()
-        .with_limit(limit);
     let readme: Option<PathBuf> = cli
         .value_of("readme")
         .map(|r| PathBuf::from_str(r).expect("Could not assign readme"));
-    let dry_run: bool = cli.value_of("dry_run").is_some();
+    let dry_run: bool = cli.is_present("dry_run");
+    let mangle: bool = cli.is_present("mangle");
+    let mut source = Source::try_from(cli.value_of("source").unwrap_or("random"))
+        .unwrap()
+        .with_limit(limit);
+
+    if mangle {
+        source = source.with_mangling();
+    }
+
+    log::debug!(
+        r#"cli:
+    - dry-run: {:?}
+    - mangle: {:?}
+    - config: {:?}
+    - limit: {:?}
+    - outdir: {:?}
+    - readme: {:?}
+    - source: {:?}
+    - token: {:?}
+    - workdir: {:?}"#,
+        dry_run,
+        mangle,
+        config,
+        limit,
+        outdir,
+        readme,
+        source,
+        token,
+        workdir,
+    );
 
     let _ = source
         .into_iter()
@@ -153,7 +180,8 @@ fn main() {
                 .with_outdir(outdir.clone())
                 .with_readme(readme.clone())
                 .publish(dry_run)
-                .unwrap_or_else(|e| log::error!("For {}: {:?}", r, e))
+                .map(|()| log::info!("{} published", r))
+                .unwrap_or_else(|e| log::error!("For {}: {:?}", r, e));
         })
         .collect::<()>();
 }

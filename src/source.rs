@@ -10,22 +10,26 @@ use crate::mangle::mangle_word;
 
 const RANDOM_WORD_LENGTH: usize = 16;
 
+#[derive(Debug)]
 pub struct Source {
     kind: SourceKind,
     limit: Option<u32>,
 }
 
+#[derive(Debug)]
 pub enum SourceKind {
     Plain(FileSource),
     Mangled(FileSource),
     Random(RandomSource),
 }
 
+#[derive(Debug)]
 pub struct FileSource {
     reader: BufReader<File>,
     mangled: Vec<String>,
 }
 
+#[derive(Debug)]
 pub struct RandomSource {
     rng: ThreadRng,
 }
@@ -81,7 +85,10 @@ impl RandomSource {
 impl FileSource {
     fn get(&mut self) -> Option<String> {
         let mut result = String::new();
-        self.reader.read_line(&mut result).ok().map(|_| result)
+        self.reader
+            .read_line(&mut result)
+            .ok()
+            .map(|_| result.trim_matches('\n').to_string())
     }
 
     fn mangle_get(&mut self) -> Option<String> {
