@@ -5,7 +5,7 @@ use flate2::Compression;
 use std::collections::BTreeMap;
 use std::env;
 use std::fs::{copy, create_dir, write, File};
-use std::io::Write;
+use std::io::{Read, Write};
 use std::path::PathBuf;
 
 use crate::cargo_toml::CargoToml;
@@ -13,6 +13,13 @@ use crate::config::Config;
 use crate::internal::{InternalError, InternalResult};
 
 const DEFAULT_VERSION: &str = "0.1.0";
+const DEFAULT_LIB: &str = r#"#[cfg(test)]
+mod tests {
+    #[test]
+        fn it_works() {
+            assert_eq!(2 + 2, 4);
+        }
+}"#;
 
 pub struct Project {
     name: String,
@@ -83,7 +90,7 @@ impl Project {
         create_dir(workdir.join("src"))?;
         let lib_path = try_as_string(workdir.join("src").join("lib.rs"))?;
         let mut lib_file = File::create(lib_path)?;
-        lib_file.write_all(b"")?;
+        lib_file.write_all(DEFAULT_LIB.as_bytes())?;
         drop(lib_file);
         // README.md
         let readme_dest_path = workdir.join(self.cargo_toml.clone().project.readme);
@@ -114,9 +121,21 @@ impl Project {
         let tar_gz = File::create(tar_path.clone())?;
         let mut gz = GzEncoder::new(tar_gz, Compression::default());
         let mut tar = tar::Builder::new(&mut gz);
-        tar.append_dir_all(".", workdir)?;
+        tar.append_dir_all(self.base_path(), workdir)?;
         // Reopen tarball and return the `File`
         File::open(tar_path).map_err(|e| e.into())
+    }
+
+    fn base_path(&self) -> String {
+        format!("{}-{}", self.name, self.version)
+    }
+
+    fn get_readme_content(&self) -> String {
+        if let Some(readme_path) = self.readme.clone() {
+            readme_from_file(readme_path)
+        } else {
+            default_readme(self.name.as_str())
+        }
     }
 
     pub fn publish(self, dry_run: bool) -> InternalResult<()> {
@@ -130,8 +149,8 @@ impl Project {
             description: Some(self.cargo_toml.clone().project.description),
             documentation: Some(self.cargo_toml.clone().project.documentation),
             homepage: Some(self.cargo_toml.clone().project.homepage),
-            readme: Some(self.cargo_toml.clone().project.readme),
-            readme_file: None,
+            readme: Some(self.get_readme_content()),
+            readme_file: Some(self.cargo_toml.clone().project.readme),
             keywords: vec![],
             categories: vec![],
             license: Some(self.cargo_toml.clone().project.license),
@@ -145,14 +164,15 @@ impl Project {
         let mut registry: crates_io::Registry = self.into();
         if dry_run {
             log::debug!("Dry run, bailing out");
-            return Ok(());
+            Ok(())
+        } else {
+            registry
+                .publish(&krate, &tarball)
+                // Ignore all warnings
+                .map(|_| ())
+                // Map error to internal error
+                .map_err(|e| InternalError::Generic(format!("Failed to publish: {:?}", e)))
         }
-        registry
-            .publish(&krate, &tarball)
-            // Ignore all warnings
-            .map(|_| ())
-            // Map error to internal error
-            .map_err(|e| InternalError::Generic(format!("Failed to publish: {:?}", e)))
     }
 }
 
@@ -185,4 +205,12 @@ Automatically generated with [xkcd-386](https://github.com/blallo/xkcd-386)
 "#,
         name
     )
+}
+
+fn readme_from_file(path: PathBuf) -> String {
+    let mut readme_content = String::new();
+    let _ = File::open(path)
+        .expect("Could not open provided readme")
+        .read_to_string(&mut readme_content);
+    readme_content
 }
