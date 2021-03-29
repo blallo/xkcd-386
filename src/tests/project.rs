@@ -39,6 +39,12 @@ fn create_project_tarball() {
     assert_eq!(
         entries,
         // Listing all the entries, including directories
-        vec!["./", "Cargo.toml", "README.md", "src", "src/lib.rs"]
+        vec![
+            "test-rs-0.1.0/",
+            "test-rs-0.1.0/Cargo.toml",
+            "test-rs-0.1.0/README.md",
+            "test-rs-0.1.0/src",
+            "test-rs-0.1.0/src/lib.rs"
+        ]
     )
 }
