@@ -63,7 +63,7 @@ OPTIONS:
     -w, --workdir <PATH_TO_WORKDIR>    Path where to create the packages to be published
 ```
 
-An simple run with randomly generated crate names should be:
+A simple run with randomly generated crate names should be:
 
 ```
 $ xkcd-386 --token <YOUR_TOKEN> --source random --limit <HOW_MANY_CRATES_TO_GENERATE>
